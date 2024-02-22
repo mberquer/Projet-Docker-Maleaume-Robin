@@ -45,13 +45,8 @@ COPY --chown=www:www . /var/www
 # Change current user to www
 USER www
 
-RUN composer install
-
-RUN npm run build
-
-RUN php artisan key:generate
+RUN chmod u+x laravel_start_launch.sh
 
 
 # Expose port 9000 and start php-fpm server
 EXPOSE 9000
-CMD ["php-fpm"]

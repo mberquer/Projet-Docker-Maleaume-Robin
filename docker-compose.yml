@@ -16,6 +16,9 @@ services:
       - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
     networks:
       - docker-final-network
+    depends_on:
+      - db
+    entrypoint: ["bash", "laravel_start_launch.sh"]
 
   #PHP Service 2
   php2:
@@ -32,6 +35,9 @@ services:
       - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
     networks:
       - docker-final-network
+    depends_on:
+      - db
+    entrypoint: ["bash", "laravel_start_launch.sh"]
 
   #Nginx Service 1
   nginx1:
