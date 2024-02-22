@@ -1,0 +1,18 @@
+http:
+  routers:
+    nginx-router-1:
+      rule: 'Host((`localhost`) && Path(`/nginx1`))'
+      service: nginx1
+    nginx-router-2:
+      rule: 'Host((`localhost`) && Path(`/nginx2`))'
+      service: nginx2
+
+services:
+  nginx1:
+    loadBalancer:
+      servers:
+        - url: "http://localhost:8081"
+  nginx2:
+    loadBalancer:
+      servers:
+        - url: "http://localhost:8082"

@@ -39,37 +39,57 @@ services:
       - db
     entrypoint: ["bash", "laravel_start_launch.sh"]
 
-  #Nginx Service 1
   nginx1:
     image: nginx:latest
     container_name: nginx1
     restart: unless-stopped
     tty: true
     ports:
-      - "80:80"
+      - "8081:80"
     volumes:
       - ./:/var/www
-      - ./nginx-config/nginx1.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx-config/nginx.conf:/etc/nginx/conf.d/default.conf
     networks:
       - docker-final-network
     depends_on:
       - php1
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.nginx1.rule=PathPrefix(`/nginx1`)"
+      - "traefik.http.services.nginx1.loadbalancer.server.port=80"
 
-  #Nginx Service 2
   nginx2:
     image: nginx:latest
     container_name: nginx2
     restart: unless-stopped
     tty: true
     ports:
-      - "8081:80"
+      - "8082:80"
     volumes:
       - ./:/var/www
-      - ./nginx-config/nginx2.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx-config/nginx.conf:/etc/nginx/conf.d/default.conf
     networks:
       - docker-final-network
     depends_on:
       - php2
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.nginx2.rule=PathPrefix(`/nginx2`)"
+      - "traefik.http.services.nginx2.loadbalancer.server.port=80"
+
+  reverse-proxy:
+    image: traefik:v2.10
+    container_name: traefik
+    command: --api.insecure=true --providers.docker
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./traefik.yml:/etc/traefik/traefik.yml
+      - ./config.yml:/path/to/dynamic.yml
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - docker-final-network
 
   #MySQL Service
   db:
