@@ -45,6 +45,9 @@ COPY --chown=www:www . /var/www
 # Change current user to www
 USER www
 
+RUN composer install
+RUN npm run build
+
 RUN chmod u+x laravel_start_launch.sh
 
 
